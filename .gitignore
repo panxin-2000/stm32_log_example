@@ -1,0 +1,5 @@
+/cmake-build-debug/*
+.idea/*
+/MDK-ARM/*
+01-GPIO.ioc
+STM32H750vbt6.ioc
