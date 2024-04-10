@@ -21,6 +21,8 @@
 #include "main.h"
 #include "rng.h"
 #include "gpio.h"
+#include "SEGGER_RTT.h"
+#include "elog.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -112,7 +114,10 @@ static void CPU_CACHE_Enable(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	
+
+    SEGGER_RTT_Init();
+    elog_set_filter_lvl(ELOG_LVL_VERBOSE);
+    elog_start();
 	#ifdef W25Qxx
 		SCB->VTOR = QSPI_BASE;
 	#endif

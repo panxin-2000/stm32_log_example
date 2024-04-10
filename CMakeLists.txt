@@ -56,11 +56,14 @@ include_directories(
         Drivers/CMSIS/Device/ST/STM32H7xx/Include
         Drivers/CMSIS/Include
         SEGGER/RTT)
+include_directories(easylogger/inc)
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32H750xx)
 
 file(GLOB_RECURSE SOURCES
         "Core/*.c"
+        "easylogger/port/*.*"
+        "easylogger/src/*.*"
         "Drivers/*.c"
         "SEGGER/RTT/*.c"
         "Core/Startup/startup_stm32h750vbtx.s"
@@ -69,7 +72,7 @@ file(GLOB_RECURSE SOURCES
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32H750VBTX_FLASH.ld)
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
-add_link_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork)
+add_link_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork -specs=nano.specs -specs=nosys.specs)
 add_link_options(-T ${LINKER_SCRIPT})
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
