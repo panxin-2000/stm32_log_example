@@ -31,6 +31,7 @@
 int main(void) {
 
     SEGGER_RTT_Init();
+    SEGGER_RTT_printf(0,"compile time %s %s\n",__DATE__,__TIME__);
     elog_set_filter_lvl(ELOG_LVL_VERBOSE);
     elog_start();
     MPU_Config();

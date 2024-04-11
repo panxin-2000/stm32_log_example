@@ -4,6 +4,7 @@
 
 #ifndef GPIO_INIT_H
 #define GPIO_INIT_H
+#include "stdio.h"
 
 void MPU_Config(void);
 void CPU_CACHE_Enable(void);
