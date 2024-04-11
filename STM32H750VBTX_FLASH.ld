@@ -36,6 +36,24 @@ ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM_D1) + LENGTH(RAM_D1);    /* end of RAM */
+/* _estack 是栈顶的地址，这里的栈是向下生长的满栈 */
+/* ldr   sp, =_estack       */
+/* 上面这一行，是Reset_Handler 中首先需要执行的代码，设置为向下生常的满栈 */
+/* 紧接着做的一件事是设置时钟，调用了SystemInit函数 */
+/* 这个时候还并没有初始化完成c语言运行需要的环境 */
+/* 还需要 搬移data段 和 初始化 bss段 */
+/* 这个时候c语言的运行环境就已经部署完成了 */
+/* 想要执行main函数 */
+/* 还需要 bl __libc_init_array 初始化c库 */
+/* 最后 bl main 会调转到main函数开始执行 */
+/* 最后还有一行bl lr  不知道有什么用，跳出main结果如下*/
+/* lr 0x08004a59 */
+/* arm-none-eabi-addr2line -e cmake-build-debug/stm32_log_example.elf 0x08004a55 */
+/* /home/panxin/CLionProjects/stm32_log_example/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng.c:259 */
+/*  最后总会跳入这个函数 void HardFault_Handler(void) */
+/* 需要知道怎么跳入这个函数的 触发了哪个异常跳入的这个函数？*/
+
+
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x200;      /* required amount of heap  */
 _Min_Stack_Size = 0x400; /* required amount of stack */
