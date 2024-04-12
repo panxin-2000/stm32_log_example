@@ -1,3 +1,5 @@
+##TODO:问题：为什么这里不能也当作一个库来引入？
+#
 #add_library(Core "")
 #
 #file(GLOB_RECURSE Core_SOURCES
