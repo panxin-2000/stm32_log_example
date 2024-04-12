@@ -68,26 +68,11 @@ else ()
     # __FILE__ 和 __LINE__ 编译器内置的宏，可以参数非法时输出哪一行的参数非法了
 endif ()
 
-#include_directories 这个需要改改，最好的应该是用add_subdirectory()完成文件的引用
-include_directories(
-        Core/Inc
-        Drivers/STM32H7xx_HAL_Driver/Inc
-        Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
-        Drivers/CMSIS/Device/ST/STM32H7xx/Include
-        Drivers/CMSIS/Include
-)
-
-
 # 添加宏定义的选项，
 # 其实上面已经添加过和调试相关的两个宏了
-
 add_definitions(-DUSE_HAL_DRIVER)
 add_definitions(-DSTM32H750xx)
-file(GLOB_RECURSE SOURCES
-        "Core/*.c"
-        "Drivers/*.c"
-        "Core/Startup/startup_stm32h750vbtx.s"
-)
+
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32H750VBTX_FLASH.ld)
 
@@ -99,17 +84,11 @@ add_link_options(-T ${LINKER_SCRIPT})
 add_subdirectory(SEGGER)
 add_subdirectory(easylogger)
 add_subdirectory(Core)
+add_subdirectory(Drivers)
 
-add_executable(${PROJECT_NAME}.elf ${SOURCES} ${SEGGER_SOURCES} ${LINKER_SCRIPT})
+add_executable(${PROJECT_NAME}.elf Core/Src/main.c ${LINKER_SCRIPT})
 
-
-#include(SEGGER/CMakeLists.txt)
-#include(Core/CMakeLists.txt)
-#include(easylogger/CMakeLists.txt)
-
-target_link_libraries(${PROJECT_NAME}.elf PRIVATE SEGGER easylogger )
-#target_include_directories(${PROJECT_NAME}.elf PUBLIC SEGGER/RTT)
-#target_include_directories(${PROJECT_NAME}.elf PUBLIC easylogger/inc)
+target_link_libraries(${PROJECT_NAME}.elf  PRIVATE SEGGER easylogger drivers Core)
 
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
