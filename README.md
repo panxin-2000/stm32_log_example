@@ -2,11 +2,14 @@
 这个项目是基于stm32h7xx的仓库
 目的是结合segger RTT和easylogger组合，然后通过另一个项目，组合qt和openocd在电脑上显示log
 
-## GPIO Test
+## 硬件平台
+[STM32H7xx Core Board](https://www.weact-tc.cn/2020/02/06/Products/)
+借用了其中的控制led灯闪烁的工程代码，修改了该工程的编译方式，做了现在的这个项目
 
-使用RNG随机数发生器生成随机数控制LED`PE3`随机闪烁
+原本的工程是在keil中编译的，我使用cmake配置项目中用的文件，生成makefile文件，
+然后调用`arm-none-eabi-gcc`编译项目，使用`openocd`烧录和调试项目代码。
 
-RNG random number generator is used to generate random Numbers to control LED `PE3` random flicker
+做这个项目是为了另一个项目[openocd_display](https://github.com/panxin22911/openocd_display)而做的,具体信息请点击链接查看。
 
 # 文件说明
 
