@@ -41,12 +41,12 @@ int main(void) {
     MX_GPIO_Init();
     MX_RNG_Init();
     uint32_t rng;
-//    while (1) {
-//        HAL_RNG_GenerateRandomNumber(&hrng, &rng);
-//        HAL_GPIO_TogglePin(PE3_GPIO_Port, PE3_Pin);
-//        HAL_Delay(rng % 600);
-//        log_a("range time %d", rng % 600);
+    while (1) {
+        HAL_RNG_GenerateRandomNumber(&hrng, &rng);
+        HAL_GPIO_TogglePin(PE3_GPIO_Port, PE3_Pin);
+        HAL_Delay(rng % 600);
+        log_a("range time %d", rng % 600);
 //        break;
-//    }
+    }
 }
 

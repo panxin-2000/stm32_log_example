@@ -74,6 +74,14 @@ add_definitions(-DUSE_HAL_DRIVER)
 add_definitions(-DSTM32H750xx)
 
 
+include_directories(
+        Core/Inc)
+file(GLOB_RECURSE SOURCES
+        "Core/*.c"
+        #        "Drivers/*.c"
+        "Core/Startup/startup_stm32h750vbtx.s"
+)
+
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32H750VBTX_FLASH.ld)
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
@@ -83,12 +91,12 @@ add_link_options(-T ${LINKER_SCRIPT})
 
 add_subdirectory(SEGGER)
 add_subdirectory(easylogger)
-add_subdirectory(Core)
 add_subdirectory(Drivers)
 
-add_executable(${PROJECT_NAME}.elf Core/Src/main.c ${LINKER_SCRIPT})
+add_executable(${PROJECT_NAME}.elf ${SOURCES}  ${LINKER_SCRIPT})
 
-target_link_libraries(${PROJECT_NAME}.elf  PRIVATE SEGGER easylogger drivers Core)
+
+target_link_libraries(${PROJECT_NAME}.elf PRIVATE SEGGER easylogger drivers)
 
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)

@@ -1,7 +1,7 @@
 add_library(drivers "")
 
 file(GLOB_RECURSE drivers_SOURCES
-        "*.c"
+        "STM32H7xx_HAL_Driver/Src/*.c"
 )
 
 
@@ -23,4 +23,4 @@ target_include_directories(drivers
         ${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32H7xx/Include
         ${CMAKE_CURRENT_LIST_DIR}/CMSIS/Include
 )
-target_link_libraries(drivers PRIVATE Core )
+#target_link_libraries(drivers PRIVATE Core )
