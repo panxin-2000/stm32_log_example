@@ -25,9 +25,11 @@
  * Function: Portable interface for each platform.
  * Created on: 2015-04-28
  */
- 
+
 #include <elog.h>
+#include <stdio.h>
 #include "SEGGER_RTT.h"
+#include "../../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
 
 /**
  * EasyLogger port initialize
@@ -38,7 +40,7 @@ ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
 
     /* add your code here */
-    
+
     return result;
 }
 
@@ -49,10 +51,10 @@ ElogErrCode elog_port_init(void) {
  * @param size log size
  */
 void elog_port_output(char *log, size_t size) {
-    
+
     /* add your code here */
     *(log + size) = 0;  //panxing改与2023年5月23日
-    SEGGER_RTT_printf(0,log);
+    SEGGER_RTT_printf(0, log);
 
 }
 
@@ -60,18 +62,18 @@ void elog_port_output(char *log, size_t size) {
  * output lock
  */
 void elog_port_output_lock(void) {
-    
+
     /* add your code here */
-    
+
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    
+
     /* add your code here */
-    
+
 }
 
 /**
@@ -79,11 +81,15 @@ void elog_port_output_unlock(void) {
  *
  * @return current time
  */
-const char *elog_port_get_time(void) {
-    
-    /* add your code here */
 
-    
+char time_string[20] = {0};
+
+const char *elog_port_get_time(void) {
+
+    /* add your code here */
+    uint32_t time = HAL_GetTick();
+    sprintf(time_string, "%d", time);
+    return time_string;
 }
 
 /**
@@ -92,9 +98,9 @@ const char *elog_port_get_time(void) {
  * @return current process name
  */
 const char *elog_port_get_p_info(void) {
-    
+
     /* add your code here */
-    
+
 }
 
 /**
@@ -103,7 +109,7 @@ const char *elog_port_get_p_info(void) {
  * @return current thread name
  */
 const char *elog_port_get_t_info(void) {
-    
+
     /* add your code here */
-    
+
 }

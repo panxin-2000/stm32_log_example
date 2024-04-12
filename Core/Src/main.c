@@ -24,15 +24,18 @@
 #include "SEGGER_RTT.h"
 #include "elog.h"
 #include "init.h"
+
 /**
   * @brief  The application entry point.
   * @retval int
   */
 int main(void) {
-
+#define LOG_TAG    "main"
     SEGGER_RTT_Init();
-    SEGGER_RTT_printf(0,"compile time %s %s\n",__DATE__,__TIME__);
+    SEGGER_RTT_printf(0, "compile time %s %s\n", __DATE__, __TIME__);
     elog_set_filter_lvl(ELOG_LVL_VERBOSE);
+    elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
+    elog_set_text_color_enabled(true);
     elog_start();
     MPU_Config();
     CPU_CACHE_Enable();
@@ -45,7 +48,7 @@ int main(void) {
         HAL_RNG_GenerateRandomNumber(&hrng, &rng);
         HAL_GPIO_TogglePin(PE3_GPIO_Port, PE3_Pin);
         HAL_Delay(rng % 600);
-        log_a("range time %d", rng % 600);
+        log_i("range time %d", rng % 600);
 //        break;
     }
 }

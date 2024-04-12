@@ -21,4 +21,4 @@ target_include_directories(easylogger
         ${CMAKE_CURRENT_LIST_DIR}/inc
 )
 
-target_link_libraries(easylogger PRIVATE SEGGER )
+target_link_libraries(easylogger PRIVATE SEGGER drivers )
