@@ -41,25 +41,32 @@ add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-le
 # Enable assembler files preprocessing
 add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
 
-#if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-#    message(STATUS "Maximum optimization for speed")
-#    add_compile_options(-Ofast)
-#elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-#    message(STATUS "Maximum optimization for speed, debug info included")
-#    add_compile_options(-Ofast -g)
-#elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
-#    message(STATUS "Maximum optimization for size")
-#    add_compile_options(-Os)
-#else ()
-# 没搞清楚${CMAKE_BUILD_TYPE}这个参数是从那里传递过来的，所以就先把上面的都注释掉了
-message(STATUS "Minimal optimization, debug info included")
-add_compile_options(-Og -g)
-add_definitions(-DDEBUG)
-add_definitions(-DUSE_FULL_ASSERT)
-#  USE_FULL_ASSERT这个hal库中用来判断参数是否合法的，具体细节见下一行
-#  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
-# __FILE__ 和 __LINE__ 编译器内置的宏，可以参数非法时输出哪一行的参数非法了
-#endif ()
+#解释一下下面是怎么工作的
+#cmake -D CMAKE_BUILD_TYPE=Release ..
+#cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo ..
+#cmake -D CMAKE_BUILD_TYPE=MinSizeRel ..
+#cmake -D CMAKE_BUILD_TYPE=Debug ..
+#当默认不做设置时就是Debug模式
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    message(STATUS "Maximum optimization for speed")
+    add_compile_options(-Ofast)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message(STATUS "Maximum optimization for speed, debug info included")
+    add_compile_options(-Ofast -g)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+    message(STATUS "Maximum optimization for size")
+    add_compile_options(-Os)
+else ()
+    # 没搞清楚${CMAKE_BUILD_TYPE}这个参数是从那里传递过来的，所以就先把上面的都注释掉了
+    message(STATUS "Minimal optimization, debug info included")
+    add_compile_options(-Og -g)
+    add_definitions(-DDEBUG)
+    add_definitions(-DUSE_FULL_ASSERT)
+    #  USE_FULL_ASSERT这个hal库中用来判断参数是否合法的，具体细节见下一行
+    #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
+    # __FILE__ 和 __LINE__ 编译器内置的宏，可以参数非法时输出哪一行的参数非法了
+endif ()
 
 #include_directories 这个需要改改，最好的应该是用add_subdirectory()完成文件的引用
 include_directories(
@@ -68,21 +75,17 @@ include_directories(
         Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
         Drivers/CMSIS/Device/ST/STM32H7xx/Include
         Drivers/CMSIS/Include
-        SEGGER/RTT)
-include_directories(easylogger/inc)
+)
+
 
 # 添加宏定义的选项，
 # 其实上面已经添加过和调试相关的两个宏了
 
 add_definitions(-DUSE_HAL_DRIVER)
 add_definitions(-DSTM32H750xx)
-
 file(GLOB_RECURSE SOURCES
         "Core/*.c"
-        "easylogger/port/*.*"
-        "easylogger/src/*.*"
         "Drivers/*.c"
-        "SEGGER/RTT/*.c"
         "Core/Startup/startup_stm32h750vbtx.s"
 )
 
@@ -92,7 +95,22 @@ add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR
 add_link_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork -specs=nano.specs -specs=nosys.specs)
 add_link_options(-T ${LINKER_SCRIPT})
 
-add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+
+add_subdirectory(SEGGER)
+add_subdirectory(easylogger)
+add_subdirectory(Core)
+
+add_executable(${PROJECT_NAME}.elf ${SOURCES} ${SEGGER_SOURCES} ${LINKER_SCRIPT})
+
+
+#include(SEGGER/CMakeLists.txt)
+#include(Core/CMakeLists.txt)
+#include(easylogger/CMakeLists.txt)
+
+target_link_libraries(${PROJECT_NAME}.elf PRIVATE SEGGER easylogger )
+#target_include_directories(${PROJECT_NAME}.elf PUBLIC SEGGER/RTT)
+#target_include_directories(${PROJECT_NAME}.elf PUBLIC easylogger/inc)
+
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

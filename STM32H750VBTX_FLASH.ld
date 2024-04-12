@@ -147,7 +147,7 @@ SECTIONS
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
     *(.RamFunc)        /* .RamFunc sections */
-    *(.RamFunc*)       /* .RamFunc* sections */
+    *(.RamFunc*)       /* .RamFunc* sections 这个也是比较特殊的，在usb的时候是会用到这个段的 */
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
