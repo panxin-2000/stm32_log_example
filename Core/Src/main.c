@@ -34,8 +34,13 @@ int main(void) {
     SEGGER_RTT_Init();
     SEGGER_RTT_printf(0, "compile time %s %s\n", __DATE__, __TIME__);
     elog_set_filter_lvl(ELOG_LVL_VERBOSE);
-    elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
-    elog_set_text_color_enabled(true);
+    elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_fmt(ELOG_LVL_ERROR, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);//配置输出信息格式
+    elog_set_text_color_enabled(true); //使能代码输出颜色
     elog_start();
     MPU_Config();
     CPU_CACHE_Enable();
@@ -48,8 +53,35 @@ int main(void) {
         HAL_RNG_GenerateRandomNumber(&hrng, &rng);
         HAL_GPIO_TogglePin(PE3_GPIO_Port, PE3_Pin);
         HAL_Delay(rng % 600);
-        log_i("range time %d", rng % 600);
-//        break;
+        static int i = 0;
+        switch (i) {
+            case ELOG_LVL_ASSERT:
+                log_a("range time %d", rng % 600);
+                ++i;
+                break;
+            case ELOG_LVL_ERROR:
+                log_d("range time %d", rng % 600);
+                ++i;
+                break;
+            case ELOG_LVL_WARN:
+                log_w("range time %d", rng % 600);
+                ++i;
+                break;
+            case ELOG_LVL_INFO:
+                log_i("range time %d", rng % 600);
+                ++i;
+                break;
+            case ELOG_LVL_DEBUG:
+                log_d("range time %d", rng % 600);
+                ++i;
+                break;
+            case ELOG_LVL_VERBOSE:
+                log_v("range time %d", rng % 600);
+                i = 0;
+                break;
+            default:
+                break;
+        }
     }
 }
 
