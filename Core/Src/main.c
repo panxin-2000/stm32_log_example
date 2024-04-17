@@ -60,7 +60,7 @@ int main(void) {
                 ++i;
                 break;
             case ELOG_LVL_ERROR:
-                log_d("range time %d", rng % 600);
+                log_e("range time %d", rng % 600);
                 ++i;
                 break;
             case ELOG_LVL_WARN:
